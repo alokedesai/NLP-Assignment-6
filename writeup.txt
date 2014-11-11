@@ -1,0 +1,173 @@
+1) This was the output:
+NULL	bleu	0.0021445873843176626
+NULL	fleur	0.002023435803050878
+NULL	la	0.8370707367941527
+NULL	maison	0.15876124001847886
+blue	bleu	0.9600570616961432
+blue	la	0.0036595032914396113
+blue	maison	0.036283435012417216
+flower	fleur	0.9893225620932817
+flower	la	0.010677437906718159
+house	bleu	0.012432503683676125
+house	la	0.06720411276376861
+house	maison	0.9203633835525553
+the	bleu	0.0021445873843176626
+the	fleur	0.002023435803050878
+the	la	0.8370707367941527
+the	maison	0.15876124001847886
+
+Just looking at the translations, they seem pretty accurate. The highest probability word that is attached to blue is bleu, to flower is fleur, and to the is la, all of which we would expect. The probability for those that are wrong low for most of the words but is surprisingly for some of the words. For example the probability maison goes to the is still 16% and the probability la goes to flower is still 10%. Furthermore the NULL word is a little bit deceiving because the highest probability for a word aligning to NULL is la, even though we have an equally have probability that la is alligned to the.
+
+2) These are randomly lines from the output:
+
+maintenance	mantenimiento	0.5071553155117818
+poettering	poettering	0.6205780732052665
+depends	depende	0.45302857952023085
+response	respuesta	0.6258901205693344
+refused	a	0.36186559606763624
+easy	fácil	0.32691673777115554
+serb	serbia	0.3763538260707368
+regional	regional	0.5140039687241312
+refers	refiere	0.4217643961275376
+hypocritically	con	0.3459409286073582
+discharge	aprobación	0.39536168985083514
+eastern	oriental	0.31379153997802156
+trademark	lleva	0.326014105505877
+s	de	0.31211648214807375
+not	no	0.9291176203080602
+protection	protección	0.7937287067811907
+minimum	mínimo	0.3789781608325457
+demonstration	manifestación	0.37421981624224376
+social-democratic	formulado	0.35940800156785835
+regions	las	0.34248114812192504
+inland	vía	0.3310694237903557
+provocative	provocador	0.3050961706039409
+
+Many of these words, specifically:
+	maintenance -> mantenimiento
+	poettering -> poettering
+	depends -> depende
+	response -> respuresta
+	easy -> fácil
+	regional -> regional
+	refers -> refiera
+	easteran -> oriental
+	not -> no
+	protection -> protección
+	minimum -> mínimo
+	demonstration -> manifestación
+	provacative -> provocador 
+are exactly right. However, there are some that are clearly wrong, but still have a very high probabililty. For example, lleva means carry not trademark, de means of not s, a means to not refused, las means the not inland. I'm especially surprsed las aligning to regions has such a high probability because las likely occurs in many sentences and wouldn't expect it to align to region that often (or even have region in that many english sentences that have las in the spanish sentence).
+
+3) 
+To test the correctness of my algorithm I used the data set:
+the dog		the chien
+the cat		the chat
+
+I used a professional IBM Model 1 alignment tool that I found on Github and compared the output to my output. My output for 5 iterations was:
+NULL	chat	0.12219598583234947
+NULL	chien	0.12219598583234947
+NULL	le	0.755608028335301
+cat	chat	0.8380566801619432
+cat	le	0.16194331983805665
+dog	chien	0.8380566801619432
+dog	le	0.16194331983805665
+the	chat	0.12219598583234947
+the	chien	0.12219598583234947
+the	le	0.755608028335301
+
+Whereas for the output it was:
+P(le | NULL) = 0.755608028335301
+P(chien | NULL) = 0.122195985832349
+P(chat | NULL) = 0.122195985832349
+P(le | the) = 0.755608028335301
+P(chien | the) = 0.122195985832349
+P(chat | the) = 0.122195985832349
+P(le | dog) = 0.161943319838057
+P(chien | dog) = 0.838056680161943
+P(le | cat) = 0.161943319838057
+P(chat | cat) = 0.838056680161943
+
+We see that these are the same.
+
+I also did parts of this by hand for the first and second iteration. 
+
+Iteration 1:
+P(le | the) = P(chien | the) = P(chat | the) = 1/3
+P(le | dog) = P(chien | dog) = P(chat | dog) = 1/3
+P(le | cat) = P(chien | cat) = P(chat | cat) = 1/3
+P(le | NULL) = P(chien | NULL) = P(chat | NULL) = 1/3
+
+Sentence: le chien
+	word: le
+		denominator: 1/3 + 1/3 + 1/3 = 1
+		count(le, null) += P(le|NULL)/1 = .333
+		count(le|the) += P(le|the)/1 = .333
+		count(le|dog) += P(le|dog)/1 = .333
+	word: chien
+		denominator: 1/3 + 1/3 + 1/3 = 1
+		count(chien, null) += P(chien|NULL)/1 = .333
+		count(chien,the) += P(chien|the)/1 = .333
+		count(chien, dog) += P(chien|dog)/1 = .333
+Sentence: le chat
+	word: le
+		denominator: 1/3 + 1/3 + 1/3 = 1 
+		count(le, null) += P(le|NULL)/1 = .666
+		count(le|the) += P(le|the)/1 = .666
+		count(le|cat) += P(le|cat)/1 = .333
+	word: chat
+		denominator: 1
+		count(chat, null) += P(chat|NULL)/1 = .333
+		count(chat, the) += P(chat|the)/1 = .333
+		count(chat, cat) += P(chat|dog)/1 = .333
+
+MODEL:
+count(the) = .6666 + .333 + .333 = 1.333
+P(le|the) = count(le,the) / count(the) = .666/1.333 = .5
+P(chien|the) = count(chien,the)/total(the) = .333/1.333 = .25
+P(chat|the) = count(chat,the) / total(the) = .25
+
+count(dog) = .666
+P(le|dog) = count(le|dog)/total(dog) = .333 / .666 = .5
+P(chien|dog) = count(chien, dog) / total(dog) = .333/.6666 = .5
+
+I only calculated these probabilities and noticed that these probabilities matched my output. I assumed it worked for iteration 1 and used the resulting probability alignments during the second iteration.
+
+ITERATION 2
+Sentence: le chien
+	word: le
+		denominator = P(le|NULL)+P(le|the)+P(le|dog)= 1.5
+		count(le,null) = .5/1.5 = .333
+		count(le,the) = .5/1.5 = .333
+		count(le,dog) = .5/1.5 = .333
+	word: chien
+		denominator = P(chien | NULL)+P(chien | the)+P(chien | dog)= 1
+
+		count(chien, NULL) = .25/1 = .25
+		count(chien,the) = .25/1 = .25
+		count(chien,dog) = .5/1 = .5
+Sentence: le chat
+	word: le
+		denominator = P(le | NULL)+P(le | the)+P(le | cat)= 1.5
+		count(le, null) = P(le|null)/1.5 = .666
+		count(le,the) = .666
+		count(le, cat) = .333
+	word: chat
+		denominator = P(chat | NULL)+P(chat | the)+P(chat | cat)=1
+		count(chat, null) = .25/1 = .25
+		count(chat, the) = .25/1 = .25
+		count(chat, cat) = .25/1 = .5
+MODEL PART OF ALGORITHM:
+	count(the) = .666 + .25 + .25 = 1.166
+	P(le|the) = .666 / 1.66 = .5711
+	P(chien | the) = .25 / 1.66 = 2.144
+	P(chat|the) = .25/1.166 = 2.144
+
+	count(dog) = .833
+	P(le|dog) = .333/.833 = .4
+	P(chien|dog) = .5/.833 = .6
+
+I then recompared these probabilities and noticed again that they matched the probabilities I had. Therefore, using an inductive-like 'proof', we see that there is strong evidence that the algorithm is correct.
+
+
+
