@@ -317,8 +317,8 @@ public class EMAlgorithm {
 	}
 	
 	public static void main(String[] args) {
-		EMAlgorithm x = new EMAlgorithm("enhead","eshead", 10);
-		x.printAlignments(0.3);
+		EMAlgorithm x = new EMAlgorithm(args[0],args[1], Integer.parseInt(args[2]));
+		x.printAlignments(Double.parseDouble(args[3]));
 //		x.printActualAlignments("madam president , on a point of order .", "se–ora presidenta , una cuesti—n relativa al reglamento .");
 //		x.printActualAlignments("it will , i hope , be examined in a positive light .", "espero que se examine con un esp’ritu positivo .");
 //		x.printActualAlignments("the house", "la casa");
