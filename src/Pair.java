@@ -1,8 +1,8 @@
 
 public class Pair {
-	String english;
-	String foreign;
-	public Pair(String english, String foreign) {
+	int english;
+	int foreign;
+	public Pair(int english, int foreign) {
 		this.english = english;
 		this.foreign = foreign;
 	}
@@ -16,11 +16,11 @@ public class Pair {
 	public boolean equals(Object p) {
 		return this.toString().equals(p.toString());
 	}
-	public String e() {
+	public int e() {
 		return english;
 	}
 	
-	public String f() {
+	public int f() {
 		return foreign;
 	}
 	
