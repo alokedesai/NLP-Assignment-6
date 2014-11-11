@@ -82,63 +82,62 @@ public class EMAlgorithm {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println(englishSentences.get(218));
-		System.out.println(foreignSentences.get(218));
-//		for (int j = 0; j < iterations; j++) {
-//			// Count(e)
-//			Hashtable<String, Double> wordCount = new Hashtable<String, Double>();
-//			// Count(e,f)
-//			HashMap<Pair, Double> pairCount = new HashMap<Pair, Double>();
-//			// all possible pairs of words
-//			HashSet<Pair> pairs = new HashSet<Pair>();
-//			
-//			// The E part of the algorithm
-//			for (int i = 0; i < englishSentences.size(); i ++) {
-//				ArrayList<String> E = englishSentences.get(i);
-//				ArrayList<String> F = foreignSentences.get(i);
-//
-//				for (String f : F)  {
-//					
-//					// precompute denominator to save time
-//					double denominator = 0.0;
-//					if (j != 0) {
-//						for (String e: E) {
-//							denominator += probAlignments.get(e).get(f);
-//						}
-//					}
-//					
-//					for (String e : E) {
-//						if (j == 0) {
-//							double oldCount = wordCount.containsKey(e) ? wordCount.get(e) : 0.0;
-//							wordCount.put(e, .1 + oldCount);
-//							
-//							Pair p = new Pair(e,f);
-//							pairs.add(p);
-//							
-//							double pCount = pairCount.containsKey(p) ? pairCount.get(p) : 0.0;
-//							pairCount.put(p, .1 + pCount);
-//						} else {
-//							Pair p = new Pair(e,f);
-//							pairs.add(p);
-//							
-//							double oldCount = wordCount.containsKey(e) ? wordCount.get(e) : 0.0;
-//							double pCount = pairCount.containsKey(p) ? pairCount.get(p) : 0.0;
-//	
-//							double prob = probAlignments.get(e).get(f) / denominator;
-//							
-//							pairCount.put(p, pCount + prob);
-//							wordCount.put(e, oldCount + prob);
-//						}
-//					}
-//				}
-//			}
-//			
-//			// M part of the algorithm
-//			for (Pair pair : pairs) {
-//				Double prob = pairCount.get(pair) / wordCount.get(pair.e());
-//				addToAlignments(pair.e(), pair.f(), prob);
-//			}
-//		}
+
+		for (int j = 0; j < iterations; j++) {
+			// Count(e)
+			Hashtable<String, Double> wordCount = new Hashtable<String, Double>();
+			// Count(e,f)
+			HashMap<Pair, Double> pairCount = new HashMap<Pair, Double>();
+			// all possible pairs of words
+			HashSet<Pair> pairs = new HashSet<Pair>();
+			
+			// The E part of the algorithm
+			for (int i = 0; i < englishSentences.size(); i ++) {
+				ArrayList<String> E = englishSentences.get(i);
+				ArrayList<String> F = foreignSentences.get(i);
+
+				for (String f : F)  {
+					
+					// precompute denominator to save time
+					double denominator = 0.0;
+					if (j != 0) {
+						for (String e: E) {
+							denominator += probAlignments.get(e).get(f);
+						}
+					}
+					
+					for (String e : E) {
+						if (j == 0) {
+							double oldCount = wordCount.containsKey(e) ? wordCount.get(e) : 0.0;
+							wordCount.put(e, .1 + oldCount);
+							
+							Pair p = new Pair(e,f);
+							pairs.add(p);
+							
+							double pCount = pairCount.containsKey(p) ? pairCount.get(p) : 0.0;
+							pairCount.put(p, .1 + pCount);
+						} else {
+							Pair p = new Pair(e,f);
+							pairs.add(p);
+							
+							double oldCount = wordCount.containsKey(e) ? wordCount.get(e) : 0.0;
+							double pCount = pairCount.containsKey(p) ? pairCount.get(p) : 0.0;
+	
+							double prob = probAlignments.get(e).get(f) / denominator;
+							
+							pairCount.put(p, pCount + prob);
+							wordCount.put(e, oldCount + prob);
+						}
+					}
+				}
+			}
+			
+			// M part of the algorithm
+			for (Pair pair : pairs) {
+				Double prob = pairCount.get(pair) / wordCount.get(pair.e());
+				addToAlignments(pair.e(), pair.f(), prob);
+			}
+		}
 	}
 	
 	/**
@@ -196,7 +195,7 @@ public class EMAlgorithm {
 			String currentWord = englishWords[0];
 			for (String e : englishWords) {
 				double probValue = probAlignments.get(e).containsKey(f) ? probAlignments.get(e).get(f) : 0.0;
-				if (probValue > maxProbability) {
+				if (probValue >= maxProbability) {
 					maxProbability = probValue;
 					currentWord = e;
 				}
@@ -207,7 +206,7 @@ public class EMAlgorithm {
 	
 	public static void main(String[] args) {
 		EMAlgorithm x = new EMAlgorithm("enhead","eshead", 10);
-//		x.printAlignments("la casa", "the house");
+		x.printAlignments("madam president , on a point of order", "se–ora presidenta , una cuesti—n relativa al reglamento");
 //		x.printAlignments(0.0);
 	}
 }
