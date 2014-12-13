@@ -205,8 +205,8 @@ public class EMAlgorithm {
 	}
 	
 	public static void main(String[] args) {
-		EMAlgorithm x = new EMAlgorithm("enhead","eshead", 10);
-		x.printAlignments("madam president , on a point of order", "se–ora presidenta , una cuesti—n relativa al reglamento");
-//		x.printAlignments(0.0);
+		EMAlgorithm x = new EMAlgorithm("test.en","test.fr", 10);
+//		x.printAlignments("madam president , on a point of order", "se–ora presidenta , una cuesti—n relativa al reglamento");
+		x.printAlignments(0.0);
 	}
 }

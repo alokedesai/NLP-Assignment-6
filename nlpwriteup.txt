@@ -1,0 +1,44 @@
+Aloke Desai
+Hw 6 part 2, Extension 1
+-I also remove all arraylists from my code.
+
+Writeup:
+1.) 
+Output of test example:
+NULL	la	0.8370707367941527
+blue	bleu	0.9600570616961432
+flower	fleur	0.9893225620932817
+house	maison	0.9203633835525553
+the	la	0.8370707367941527
+
+
+2.)
+Using algorithm with integers, we have to do the preprocessing O(E) where E is the number of English (or Foreign) sentences. Though this asymptotically doesn't affect the run-time, this will definitely increase the speed because we have to re-read through both the english and foreign corpus one more time. Besides this addition, the run-time of every other aspect of the algorithm will be the same.
+
+			"Memory-efficient version"
+	
+			input size  |  % memory | speed
+			-----------------------------
+				100 		.5%		2.962s
+			------------|---------|-----------
+				1000 		2.7%	17.081s
+			------------|---------|-----------
+				10000	   5.1%    2m6.908s
+			------------|---------|-----------
+				100,000   5.5%   	33m.451s
+			------------|---------|-----------
+			
+			"Original Version"
+
+			input size  |  memory | speed
+			-----------------------------
+				100        .5%		2.235s
+			------------|---------|-----------
+				1000 		2.7% 	15.003s
+			------------|---------|-----------
+				10000	     4.9%    2m48.517s
+			------------|---------|-----------
+				100,000      8%		45m45.08s
+			------------|---------|-----------
+
+Where the percentages, are the %mem used on the project server. The total amount of memory on the server is 20628880k.
